@@ -1,0 +1,21 @@
+Problem URL - https://leetcode.com/problems/contains-duplicate/
+
+Neetcode solution github url - https://github.com/neetcode-gh/leetcode/blob/main/python/0217-contains-duplicate.py
+
+Understanding of the Soltion - 
+The optimised solution TLDR - 
+Create an empty hashset, the check if element 1 of array contains in hashset, if not add to hashset, then check if element 2 of array is in hashset, if not add it, then keep on checking till you find an element of array which matches the elements of hashset. If an element matches return value as true, if no element matches, return false.
+Time and Space/ Memory complexity  - O(n)
+
+Solution - 
+
+class Solution:
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        hashset = set() # create an empty hashset
+
+      # iterate through the array named nums, if n which will be element value of nums matches hashset, return true, else add to hashset, then when loop finishes without a returning true, return  false.
+        for n in nums:
+            if n in hashset:
+                return True
+            hashset.add(n)
+        return False
