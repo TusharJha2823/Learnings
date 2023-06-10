@@ -1,0 +1,51 @@
+Here contains the solution of Two Sum. I have followed the solution of neetcode.io
+
+Problem URL - https://leetcode.com/problems/two-sum/
+
+NeetCode Github Solution URL - https://github.com/neetcode-gh/leetcode/blob/main/python/0001-two-sum.py
+
+Explanation of the solution - https://www.youtube.com/watch?v=KLlXCFG5TnA
+
+My understanding of the Approach of the Solution - 
+
+So the example shows we have an array of numbers [2,1,5,3] and a target solution of 4 and we have returned the indices of the sum of the 2 numbers which make add up to 9. Also, the question states that there can be only one solution, not multiple solutions. 
+So the optimized approach is to take the first number, subtract it from the target and see if the remainder is in the array or not. And the efficient way to do so is to store all the values of the array in a hashmap.  
+
+Setup of hashmap - the indices become key and the array elements become the values.
+
+So the pair are - 
+
+2 value - 0 index
+1 value - 1 index
+5 value - 2 index
+3 value - 3 index
+
+Now if we minus 4 with the first value which is 2  = 2. Since this is the first element we can't use the same value twice, we would have to compare the index of current 2 and the index of the hashmap and if they match, we don't do that 2. So the index has to be different. 
+
+To avoid this, initially, we keep our hashmap empty. Then we takThen we take the first element of the array which is 2, subtract it from the target and then add it to the hashmap at index 0. 
+The second element of the array which 1, so subtract 4 -1 = 3, so I see that 3 is not yet in our hashmap, so add this 1 to our hashmap at index 1. Next comes element 5, we subtract 4-5 = -1 and we check if -1 exists in our hashmap, we add 5 to the hashmap at index 2. Then comes element 3, we subtract 4-3 =1, and since 1 exists in our hashmap, we can return the indices of values 1 and 3. 
+This solution keeps the hashmap empty initially and then while we iterate through the array in 1 pass. 
+This solution works in 1 pass because we know if we have a giant array and we know for sure that there are 2 numbers that add up to the given target. 
+They're at some arbitrary location, when we visit the first one of those elements our hash map is only going to be the first few portions of the array it's only going to have the values that came before it.
+before the first value. So we're gonna notice that the second value that can sum to the target is not going to be in our hash map yet but once we get to the second value our hash map is going the second portion so every value that comes before this point will be in the hashmap. And we are gonna be guaranteed that once we visit the second element that sums up to the target we're gonna be guaranteed that the first one is already in our hash map.
+Since we only have to iterate through the array once and we're adding each value to our hash map which is a constant time operation and we're checking if a value exists in our hash which is also a constant time operation. The time complexity is going to be O(n). We are using extra memory, right that hashmap isn't free, so the memory complexity is also going to be O(n). Because we could potentially add every value to the hash map.
+
+TLDR -
+Let the array of elements be, then create an empty hashmap. 
+Take the first element of the array, substract from target, check if in hashmap, if not add to hashmap at index of 0. 
+Then keep repeating till you find the number which when subtracted with target gives you a remainder which matches with the elements of the Hashmap. This will go in one pass, Time complexity and memory complexity O(n). 
+ 
+
+Solution - class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        # create an empty hashmap. 
+        prevMap = {}  # val -> index
+        # The trick is to store element of the array as key of hashmap and index of the array as the value of the hashmap.
+    
+    # iterate the elements of the array/ list and add to hashmap. Here nums is the list of elements, i is the loop counter which would return the second index, and n is the loop value which would loop through element of the list nums
+        for i, n in enumerate(nums):
+            diff = target - n
+            if diff in prevMap:
+            # now return the index value of hashmap at the diff value.
+                return [prevMap[diff], i]
+            prevMap[n] = i
