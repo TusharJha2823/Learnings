@@ -1,0 +1,68 @@
+Problem URL - https://leetcode.com/problems/valid-anagram/
+
+Neetcode Solution github URL - https://github.com/neetcode-gh/leetcode/blob/main/python/0242-valid-anagram.py
+
+Neetcode youtube solution URL - https://www.youtube.com/watch?v=9UtInBqnCgA
+
+This problem can have multiple solution
+
+My understanding of Solution 1 :
+
+First check if the length of the 2 strings is equal, if not retunr false. then create a hashmap, ok, now for loop through the elements of 2 arrays, set length or array using the function len(s). Now, in the HashMap we created, add the elements of 1st array and then sustract the elements of the 2 nd array. The Key will the elements and value would be the occurence of the elements. 
+
+Now for loop through the hashmap and check if all values equal to 0.
+
+Solution - class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        if len(s) != len(t):
+            return False
+        anaMap = {}
+
+        for i in range(len(s)):
+            anaMap[s[i]] = anaMap.get(s[i], 0) + 1
+            anaMap[t[i]] = anaMap.get(t[i], 0) - 1
+   
+        for i in anaMap.values():
+            if i != 0 :
+                return False    
+
+        return True 
+        
+My understanding of Soltuion 2. This solution is given by Neetcode - This is the fastest solution in python:
+
+Check if length of the 2 strings are equal. Then create 2 hashmap, add the elements of the string 1 to first hashmap and string 2 to second hashmap. Then check if both hashmap are equal. This answer is faster than first one.
+
+Solution 2 - 
+class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+        if len(s) != len(t):
+            return False
+
+        countS, countT = {}, {}
+
+        for i in range(len(s)):
+            countS[s[i]] = 1 + countS.get(s[i], 0)
+            countT[t[i]] = 1 + countT.get(t[i], 0)
+        return countS == countT
+
+My understanding of Solution 3. This uses array as compared to hashmap. Though the solution is faster for java as compared to python for some reason.
+
+class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+    if len(s) != len(t):
+            return False
+    
+    arr[] = [0] *26  # we initalize an empty array of size 26
+    for i in range(len(s)) :
+             arr[ord(s[i]) - ord('a')] += 1
+
+        for j in range(len(t)) :
+            arr[ord(t[j]) - ord('a')] -= 1
+            # if  arr[ord(t[j]) - ord('a')] < 0 :
+            #    return False  
+        for i in range(len(arr)):
+            if arr[i] != 0 :
+                return False
+        return True
+    
+    
