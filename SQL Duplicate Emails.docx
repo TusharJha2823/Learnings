@@ -1,0 +1,10 @@
+Problem URL - https://leetcode.com/problems/duplicate-emails/description/
+
+Solution explanation -
+Use the group by to group all emails together and then use having, which checks the number of emails greater than 1 in the group by.
+
+Solution - 
+Select email 
+From Person
+group by email
+having count(email) > 1
