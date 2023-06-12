@@ -1,0 +1,7 @@
+Problem URL - https://leetcode.com/problems/invalid-tweets/description/?envType=study-plan-v2&envId=top-sql-50
+
+Solution - USE length() to get length of characters
+
+Select tweet_id
+FROM Tweets
+WHere length(content) >15
