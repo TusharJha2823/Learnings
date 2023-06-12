@@ -7,7 +7,7 @@ The optimised solution TLDR -
 Create an empty hashset, the check if element 1 of array contains in hashset, if not add to hashset, then check if element 2 of array is in hashset, if not add it, then keep on checking till you find an element of array which matches the elements of hashset. If an element matches return value as true, if no element matches, return false.
 Time and Space/ Memory complexity  - O(n)
 
-Solution - 
+Solution 1 - 
 
 class Solution:
     def containsDuplicate(self, nums: List[int]) -> bool:
@@ -19,3 +19,9 @@ class Solution:
                 return True
             hashset.add(n)
         return False
+
+Solution 2 - 
+
+class Solution:
+    def containsDuplicate(self, nums: List[int]) -> bool:
+    return len(set(nums)) != len(nums)
