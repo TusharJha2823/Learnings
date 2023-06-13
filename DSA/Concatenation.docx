@@ -1,0 +1,18 @@
+Problem URL - https://leetcode.com/problems/concatenation-of-array/description/
+
+Neetcode solution github URL - https://github.com/neetcode-gh/leetcode/blob/main/python/1929-concatenation-of-array.py
+
+Neetcode solution youtube URL - https://www.youtube.com/watch?v=68isPRHgcFQ
+
+My understanding of the solution - 
+
+create an empty array, then create a for loop, to run as many time we want to concatenate, if we want to do twice make it 2, if thrice make it 3. Then in the inner loop, create a for loop, this runs through the elements of the first array and then appends to the second array. And since the outer array runs twice, it will add all the elements twice.
+
+
+class Solution:
+    def getConcatenation(self, nums: List[int]) -> List[int]:
+        ans = []
+        for i in range(2):
+            for n in nums:
+                ans.append(n)
+        return ans
