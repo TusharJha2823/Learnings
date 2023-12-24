@@ -1,0 +1,15 @@
+Problem URL - https://leetcode.com/problems/replace-employee-id-with-the-unique-identifier/description/?envType=study-plan-v2&envId=top-sql-50
+
+Use coalesce to solve this 
+
+Solution - 
+# Write your MySQL query statement below
+
+-- Employee table has id and name, now employeeUNI table mein id, unique_id hai.
+-- Return karo - unique id and name where there is a unique id for an id, 
+-- Return null if no unique id
+
+SELECT COALESCE(null, eu.unique_id) as unique_id, e.name
+From Employees as e
+LEFT JOIN EmployeeUNI as eu
+ON e.id = eu.id
