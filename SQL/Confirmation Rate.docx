@@ -1,0 +1,21 @@
+Problem URL - https://leetcode.com/problems/confirmation-rate/description/?envType=study-plan-v2&envId=top-sql-50
+
+Youtube solution for MySQL - https://www.youtube.com/watch?v=VgpN3Eh3Yg8
+
+
+SOLUTION Using  MS SQL Server - 
+
+Explaination - So the result table needs all user id so we need to do a left join on the userid columns of both tables. Next we need to group by user id ans the results are based on each individual user
+/* Write your T-SQL query statement below */
+
+SELECT s.user_id, 
+    COALESCE(
+        ROUND(
+            CAST( SUM(
+                CASE WHEN action='confirmed' Then 1 
+                ELSE 0 END)
+            AS FLOAT) /COUNT(*), 2), 0.00) AS confirmation_rate 
+FROM Signups s
+LEFT JOIN Confirmations c
+ON s.user_id = c.user_id
+GROUP BY s.user_id;
