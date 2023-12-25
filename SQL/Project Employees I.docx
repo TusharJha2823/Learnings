@@ -1,0 +1,12 @@
+Problem URL - https://leetcode.com/problems/project-employees-i/description/?envType=study-plan-v2&envId=top-sql-50
+
+SOLUTION - 
+
+  /* Write your T-SQL query statement below */
+
+
+SELECT p.project_id, COALESCE(ROUND(CAST(SUM(experience_years) AS FLOAT)/COUNT(*),2), 0.00) as average_years
+FROM Project p
+LEFT JOIN Employee e
+ON p.employee_id = e.employee_id
+GROUP BY p.project_id
