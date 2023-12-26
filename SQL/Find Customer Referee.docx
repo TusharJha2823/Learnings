@@ -1,7 +1,0 @@
-Problem URL - https://leetcode.com/problems/find-customer-referee/?envType=study-plan-v2&envId=top-sql-50
-
-Solution - Use both where and is null to include the null values as well, they are not returned if you do just <> 2.
-
-SELECT name 
-FROM Customer
-WHERE referee_id <> 2 OR referee_id is null
