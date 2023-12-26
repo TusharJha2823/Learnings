@@ -1,0 +1,8 @@
+Problem URL - https://leetcode.com/problems/user-activity-for-the-past-30-days-i/description/?envType=study-plan-v2&envId=top-sql-50
+
+Solution - # Write your MySQL query statement below
+
+SELECT activity_date as day , COUNT(DISTINCT user_id ) as active_users 
+FROM Activity
+Group By activity_date 
+HAVING DATEDIFF('2019-07-27', activity_date) >= 0 AND DATEDIFF('2019-07-27', activity_date) < 30
