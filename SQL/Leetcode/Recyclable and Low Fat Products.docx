@@ -1,0 +1,7 @@
+Problem URL - https://leetcode.com/problems/recyclable-and-low-fat-products/description/?envType=study-plan-v2&envId=top-sql-50
+
+Solution - Select product_id
+FROM Products
+WHERE low_fats = 'Y'
+AND recyclable = 'Y'
+order by product_id;
