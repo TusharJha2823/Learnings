@@ -1,0 +1,22 @@
+Problem URL - https://leetcode.com/problems/immediate-food-delivery-ii/description/?envType=study-plan-v2&envId=top-sql-50
+
+Youtube Solution - https://www.youtube.com/watch?v=I-38YxAIwK0
+
+Solution - 
+
+MS SQL solution
+WITH CTE as (
+    SELECT customer_id, MIN(order_date) AS order_date
+    FROM Delivery 
+    GROUP BY customer_id 
+)
+
+Select ROUND(CAST(SUM(CASE WHEN order_date = customer_pref_delivery_date Then 1 ELSE 0 END) AS FLOAT) *100.0/ COUNT(DISTINCT customer_id), 2) AS immediate_percentage 
+FROM  Delivery 
+WHERE (customer_id, order_date) IN     
+( SELECT customer_id, order_date
+    FROM CTE);
+
+
+
+T - SQL Solution - This was hell I didn't try it. leetcode's SQL server is maniacally obtuse, I wasted so much time and it didn't work.
