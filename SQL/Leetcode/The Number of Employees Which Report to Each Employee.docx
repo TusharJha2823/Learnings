@@ -1,0 +1,24 @@
+Problem URL - https://leetcode.com/problems/the-number-of-employees-which-report-to-each-employee/?source=submission-ac
+
+Youtube Soluiton - https://www.youtube.com/watch?v=jpJExZk4G1A&list=PL5TWX8S_wvBPtMyBAjifOT1CfLwQPng86&index=30
+
+
+Solution - 
+
+# Write your MySQL query statement below
+
+Select 
+    e1.employee_id,
+    e1.name,
+    COUNT(e2.employee_id) AS reports_count  ,
+    ROUND(AVG(e2.age),0) AS average_age
+FROM 
+    Employees e1
+INNER JOIN 
+    Employees e2
+ON 
+    e1.employee_id = e2.reports_to
+GROUP BY 
+    e1.employee_id, e1.name
+ORDER BY 
+    e1.employee_id
