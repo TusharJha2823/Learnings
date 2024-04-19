@@ -1,0 +1,26 @@
+Problem URL - https://leetcode.com/problems/last-person-to-fit-in-the-bus/description/?envType=study-plan-v2&envId=top-sql-50
+
+Youtube Solution - https://www.youtube.com/watch?v=k6Daixnf7mI&list=PL5TWX8S_wvBPtMyBAjifOT1CfLwQPng86&index=35
+
+Solution 1 - using window function
+
+My SQL -   
+  SELECT person_name FROM (SELECT person_name, turn, sum(weight) OVER (order by turn) as cum
+    FROM Queue) AS p1
+  WHERE cum< =1000 ORDER BY turn DESC LIMIT 1;
+
+MS SQL - 
+  SELECT TOP (1) person_name FROM (SELECT person_name, turn, sum(weight) OVER (order by turn) as cum
+    FROM Queue) AS p1
+  WHERE cum< =1000 ORDER BY turn DESC;
+
+SOLUTION 2 - using joins
+  SELECT q1.person_name
+  FROM Queue q1 
+  INNER JOIN Queue q2
+  ON q1.turn >= q2.turn
+  GROUP BY q1.turn
+  HAVING SUM(q2.weight) <=1000
+  ORDER BY SUM(q2.weight) DESC
+  LIMIT 1;
+  
