@@ -1,0 +1,28 @@
+Problem URL - https://leetcode.com/problems/movie-rating/?envType=study-plan-v2&envId=top-sql-50
+
+Youtube SOLUTION - https://www.youtube.com/watch?v=h3vkFZnuRvw&list=PL5TWX8S_wvBPtMyBAjifOT1CfLwQPng86&index=39
+
+NOTE : - UNION removes duplicate rows, UNION all keeps duplicate rows, Also I have used the extract function as a means of practice, you can use the month and year functions as usual. 
+  The question is tricky, here the trick is to first create groups based on user_id/movie_id, and then in order by we put the count/avg and to get the highest value we use the descending function, then name/title s ascending
+
+SOLUTION - 
+
+# Write your MySQL query statement below
+(SELECT u.name AS results
+FROM MovieRating mr1
+LEFT JOIN Users u
+USING (user_id)
+GROUP BY mr1.user_id
+ORDER BY count(rating) DESC, u.name LIMIT 1)
+
+UNION ALL
+(
+SELECT title AS results
+FROM MovieRating mr2
+LEFT JOIN Movies m
+USING (movie_id)
+WHERE EXTRACT(MONTH FROM created_at) = 2 
+AND EXTRACT(YEAR FROM created_at) = 2020
+GROUP BY mr2.movie_id
+ORDER BY AVG(rating) DESC, title
+LIMIT 1)
