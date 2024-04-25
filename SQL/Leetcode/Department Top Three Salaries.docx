@@ -1,0 +1,21 @@
+Problem URL - https://leetcode.com/problems/department-top-three-salaries/description/?envType=study-plan-v2&envId=top-sql-50
+
+Youtube Solution - https://www.youtube.com/watch?v=vdT7FinCuzk&list=PL5TWX8S_wvBPtMyBAjifOT1CfLwQPng86&index=43
+
+SOlution - 
+
+  I have used window function as opposed to the solution, it was easier for me 
+
+    # Write your MySQL query statement below
+WITH CTE AS (
+    select id, name AS Employee , salary, departmentId ,
+    DENSE_Rank() OVER(PARTITION BY departmentId ORDER BY SALARY DESC) AS rnk 
+    FROM Employee )
+
+ SELECT Department.name AS Department ,
+    Employee ,
+    Salary
+ FROM CTE
+ LEFT JOIN Department 
+ ON CTE.departmentId  = Department.id 
+ WHERE rnk <= 3 
