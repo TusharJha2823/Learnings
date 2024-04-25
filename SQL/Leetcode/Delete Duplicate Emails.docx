@@ -1,0 +1,8 @@
+Problem URL - https://www.youtube.com/watch?v=5mP8Dxgbk1Q&list=PL5TWX8S_wvBPtMyBAjifOT1CfLwQPng86&index=46
+
+Youtube URL - https://www.youtube.com/watch?v=5mP8Dxgbk1Q&list=PL5TWX8S_wvBPtMyBAjifOT1CfLwQPng86&index=46
+
+  SOLUTION - 
+  DELETE p1
+FROM Person p1 INNER JOIN Person p2
+WHERE p1.email=p2.email AND p1.id>p2.id
