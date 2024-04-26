@@ -1,0 +1,20 @@
+Problem URL - https://leetcode.com/problems/second-highest-salary/?envType=study-plan-v2&envId=top-sql-50
+
+Youtube solution - https://www.youtube.com/watch?v=wIrCoZj7sHs&list=PL5TWX8S_wvBPtMyBAjifOT1CfLwQPng86&index=47
+
+SOLUTION - 
+SOLUTION 1 - 
+SELECT MAX(e1.salary) AS "SecondHighestSalary"
+FROM Employee e1 INNER JOIN Employee e2
+ON e1.salary< e2.salary
+
+
+SOLUTION 2 - 
+WITH highest_salary AS (
+    SELECT MAX(salary) AS salary
+    FROM Employee
+)
+
+SELECT MAX(salary) AS "SecondHighestSalary" 
+FROM Employee
+WHERE salary < (SELECT salary FROM highest_salary);
