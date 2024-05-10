@@ -1,0 +1,14 @@
+Problem URL - https://leetcode.com/problems/group-sold-products-by-the-date/description/?envType=study-plan-v2&envId=top-sql-50
+
+SOlution - The important items in this question is the use of distinct keyword and then the group_concat function
+  # Write your MySQL query statement below 
+
+SELECT sell_date, COUNT(DISTINCT product) as num_sold, 
+GROUP_CONCAT(
+    DISTINCT product
+    ORDER BY product
+    SEPARATOR ','
+)  AS products
+FROM Activities
+GROUP BY sell_date
+ORDER BY sell_date , product

@@ -1,0 +1,10 @@
+PROBLEM URL - https://leetcode.com/problems/find-users-with-valid-e-mails/
+
+Youtube URL - https://www.youtube.com/watch?v=1WiFPLQCA_E&list=PL5TWX8S_wvBPtMyBAjifOT1CfLwQPng86&index=50
+
+SOLUTION - 
+
+# Write your MySQL query statement below
+SELECT  user_id , name , mail  
+FROM Users 
+WHERE mail REGEXP '^[A-Za-z][A-Za-z0-9_\.\-]*@leetcode[.]com$'    #Here the [A-Za-z] is put at first and then repeated in the next brackets is because the question states that it must start with a letter. so first filter verifies that and then second is for the remaining

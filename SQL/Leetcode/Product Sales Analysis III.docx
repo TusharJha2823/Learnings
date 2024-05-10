@@ -1,0 +1,36 @@
+Problem URL - https://leetcode.com/problems/product-sales-analysis-iii/description/?envType=study-plan-v2&envId=top-sql-50
+
+Youtube Solution - https://www.youtube.com/watch?v=YCgcdRjjWHU&list=PL5TWX8S_wvBPtMyBAjifOT1CfLwQPng86&index=25
+
+Solution - 
+  Solution 1 - #My-SQL
+
+SELECT s.product_id,
+       s.year as first_year,
+       s.quantity,
+       s.price
+FROM Sales s
+WHERE (s.product_id, s.year) IN (
+         SELECT s1.product_id, MIN(s1.year) 
+         FROM Sales s1
+         Group by s1.product_id);
+  
+
+
+  Solution 2 - 
+  /* Write your T-SQL query statement below */
+WITH CTE AS (
+  SELECT year,
+         product_id,
+         Row_Number() OVER (Partition BY product_id ORDER BY year, product_id) AS rnk
+  FROM Sales
+)
+SELECT s.product_id,
+       s.year as 'first_year',
+       s.quantity,
+       s.price
+FROM Sales s
+INNER JOIN CTE
+ON S.year = CTE.year
+AND S.product_id = CTE.product_id
+WHERE CTE.rnk = 1;

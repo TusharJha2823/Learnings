@@ -1,0 +1,13 @@
+Problem URL - https://leetcode.com/problems/biggest-single-number/description/?envType=study-plan-v2&envId=top-sql-50
+
+Solution - 
+  # Write your MySQL query statement below
+
+Select COALESCE(MAX(DISTINCT num), null) as num
+FROM MyNumbers n2
+WHere n2.num In (
+    SELECT MAX(n.num)
+    FROM MyNumbers n
+    GROUP BY n.num 
+    HAVING COUNT(n.num) = 1
+)

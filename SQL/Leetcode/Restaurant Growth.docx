@@ -1,0 +1,56 @@
+Problem URL - https://leetcode.com/problems/restaurant-growth/description/?envType=study-plan-v2&envId=top-sql-50
+
+Youtube Solution - https://www.youtube.com/watch?v=aM9GEJCCoUw&list=PL5TWX8S_wvBPtMyBAjifOT1CfLwQPng86&index=41
+
+Solution MySQL - 
+-- Follow the youtube solution for explaination, it's a bit tricky break it into parts and then you will be able to solve it.
+  
+  SELECT c.visited_on,
+    (
+      SELECT SUM(amount) 
+      FROM Customer c3
+      WHERE c3.visited_on 
+        BETWEEN DATE_SUB(c.visited_on, INTERVAL 6 DAY)
+        AND c.visited_on
+    ) AS amount,
+    ROUND(
+      (
+        SELECT SUM(amount) 
+        FROM Customer c3
+        WHERE c3.visited_on 
+          BETWEEN DATE_SUB(c.visited_on, INTERVAL 6 DAY)
+          AND c.visited_on
+      ),2) AS average_amount
+  FROM Customer c
+  WHERE c.visited on > = (
+    SELECT DATE_ADD(MIN(c2.visted_on), INTERVAL 6 DAY)
+    FROM Customer c2
+  )
+  GROUP BY c.visted_on
+  ORDER BY c.visited_on;
+
+SOLUTION FOR MS SQL - 
+
+  SELECT c.visited_on,
+    (
+      SELECT SUM(amount) 
+      FROM Customer c3
+      WHERE c3.visited_on 
+        BETWEEN DATEADD(day, -6, c.visited_on)  -- important method for date function in tsql
+        AND c.visited_on
+    ) AS amount,
+    ROUND(
+      (
+        SELECT SUM(amount) / 7.00  -- USE this way for average as the cast of avg doesn't work, it will distort the answer
+        FROM Customer c3
+        WHERE c3.visited_on 
+          BETWEEN DATEADD(day, -6, c.visited_on)
+          AND c.visited_on
+      ),2) AS average_amount
+  FROM Customer c
+  WHERE c.visited on > = (
+    SELECT DATEADD(day, 6, MIN(c2.visited_on))
+    FROM Customer c2
+  )
+  GROUP BY c.visted_on
+  ORDER BY c.visited_on;

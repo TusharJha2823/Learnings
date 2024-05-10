@@ -1,0 +1,19 @@
+Problem URL - https://leetcode.com/problems/primary-department-for-each-employee/description/?envType=study-plan-v2&envId=top-sql-50
+
+YouTube solution - https://www.youtube.com/watch?v=45r-LrnTGMU&list=PL5TWX8S_wvBPtMyBAjifOT1CfLwQPng86&index=31
+
+Solution - 
+  First, create a subquery/ CTE to return only employee_id with only 1 department. Then create an outer query that checks the value of primary key = Y.
+
+  /* Write your T-SQL query statement below */
+SELECT e1.employee_id,
+    e1.department_id
+FROM Employee e1
+WHERE e1.employee_id   IN (
+    SELECT e2.employee_id  
+    FROM Employee e2
+    GROUP BY e2.employee_id   
+    HAVING COUNT(*) = 1
+) OR
+e1.primary_flag = 'Y'
+ORDER BY e1.employee_id;
