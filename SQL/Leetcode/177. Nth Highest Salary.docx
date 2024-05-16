@@ -1,0 +1,21 @@
+Problem URL - https://leetcode.com/problems/nth-highest-salary/description/
+
+Solution - 
+
+CREATE OR REPLACE FUNCTION NthHighestSalary(N INT) RETURNS TABLE (Salary INT) AS $$
+BEGIN
+  RETURN QUERY (
+    -- Write your PostgreSQL query statement below.
+    WITH a AS(
+        select e.salary,
+        dense_rank() over (order by e.salary desc) drnk 
+        from Employee e
+    )
+
+    select a.salary
+    from a
+    where a.drnk = n
+    limit 1        
+  );
+END;
+$$ LANGUAGE plpgsql;

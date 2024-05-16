@@ -18,3 +18,28 @@ WITH highest_salary AS (
 SELECT MAX(salary) AS "SecondHighestSalary" 
 FROM Employee
 WHERE salary < (SELECT salary FROM highest_salary);
+
+SOLUTION 3 - 
+WITH CTE AS (
+    SELECT DISTINCT Salary
+    FROM Employee
+    ORDER BY Salary DESC
+    LIMIT 2
+)
+SELECT Salary as SecondHighestSalary
+FROM CTE
+ORDER BY Salary ASC
+LIMIT 1;
+
+
+SOLUTION 4 - 
+
+WITH CTE AS (
+    SELECT Salary, 
+        DENSE_RANK() OVER(ORDER BY Salary DESC) AS rnk
+    FROM Employee    
+)
+
+SELECT Salary
+FROM CTE 
+WHERE DENSE_RANK = 2;
