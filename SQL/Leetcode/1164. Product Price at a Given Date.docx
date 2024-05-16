@@ -1,0 +1,19 @@
+Problem URL - https://leetcode.com/problems/product-price-at-a-given-date/description/?envType=study-plan-v2&envId=top-sql-50
+
+Solution - 
+
+WITH PRICES AS (
+    SELECT product_id,
+    RANK() OVER(PARTITION BY product_id ORDER BY change_date DESC) AS most_recent,
+    new_price AS price,
+    change_date
+    FROM Products
+    WHERE change_date <= '2019-08-16'
+), IDs AS (
+    SELECT DISTINCT product_id FROM Products
+)
+SELECT IDs.product_id, COALESCE(price, 10) AS price
+FROM IDs
+LEFT OUTER JOIN PRICES
+ON IDs.product_id = PRICES.product_id
+AND most_recent = 1
