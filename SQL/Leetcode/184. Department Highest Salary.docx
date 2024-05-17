@@ -1,0 +1,17 @@
+Problem URL - https://leetcode.com/problems/department-highest-salary/description/
+
+SOLUTION - 
+
+/* Write your T-SQL query statement below */
+WITH CTE AS (
+    SELECT e.*,
+        RANK() OVER(PARTITION BY departmentId ORDER BY salary DESC) as rn
+    FROM Employee e
+)
+SELECT d.name AS "Department",
+    CTE.name AS "Employee",
+    CTE.salary AS "Salary"
+FROM CTE 
+LEFT JOIN Department d
+ON CTE.departmentId = d.id
+WHERE rn = 1
