@@ -1,0 +1,23 @@
+Problem URL - https://leetcode.com/problems/game-play-analysis-ii/description/
+
+This question's data matches 511, use that because of premium 
+
+Solution - 
+
+SELECT player_id, device_id
+FROM Activity
+WHERE  player_id, event_date) IN (SELECT player_id, MIN(event_date) AS "first_login"
+    FROM Activity
+    GROUP BY player_id)
+
+SQL server - 
+/* Write your T-SQL query statement below */
+WITH CTE AS (SELECT player_id, MIN(event_date) AS "first_login"
+    FROM Activity
+    GROUP BY player_id)
+
+
+SELECT player_id, device_id
+FROM Activity
+WHERE  player_id IN (SELECT player_id FROM CTE)
+AND event_date IN (SELECT first_login FROM CTE)
