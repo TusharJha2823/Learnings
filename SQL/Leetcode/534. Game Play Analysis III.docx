@@ -1,0 +1,30 @@
+Problem URL - https://leetcode.com/problems/game-play-analysis-iii/
+
+SOLUTION - 
+
+This is using window function. I understand this piece code.
+
+SELECT 
+    player_id,
+    event_date,
+    SUM(games_played) OVER(PARTITION BY player_id ORDER BY games_played) AS "games_played_so_far"
+FROM Activity
+
+SOLUTION 2- 
+
+This is using joins. I don't really understand it but okay.
+
+
+SELECT t1.player_id, t1.event_date, SUM(t2.games_played) as games_played_so_far
+FROM Activity t1
+JOIN Activity t2 ON t1.player_id = t2.player_id
+WHERE t1.event_date >= t2.event_date
+GROUP BY t1.player_id, t1.event_date;
+
+> Selecting Columns: It selects player_id, event_date, and the sum of games_played (renamed as games_played_so_far).
+> Data Retrieval: The data is being retrieved from an Activity table, which is referred to as t1.
+> Self-Join: The code performs a self-join on the Activity table, which is aliased as t2.
+> Join Condition: It joins on the condition that player_id matches in both t1 and t2.
+> Filtering: The WHERE clause filters records where t1.event_date is greater than or equal to t2.event_date.
+> Grouping Results: Finally, it groups the results by player_id and event_date.
+
