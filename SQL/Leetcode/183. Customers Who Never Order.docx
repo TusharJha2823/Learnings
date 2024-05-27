@@ -7,3 +7,8 @@ FROM Customers c
 WHERE c.id not in (
     SELECT o.customerId FROM Orders o
 );
+
+-- amazon- 3
+-- apple- 7
+-- bloomberg- 5
+-- adobe- 2
