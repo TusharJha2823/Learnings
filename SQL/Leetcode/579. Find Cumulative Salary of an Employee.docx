@@ -1,0 +1,24 @@
+Problem URL - https://leetcode.com/problems/find-cumulative-salary-of-an-employee
+
+SOLUTION - 
+
+SELECT
+    a.id,
+    a.month,
+    SUM(b.salary) AS Salary
+FROM
+    Employee a
+JOIN Employee b ON
+    a.id = b.id AND
+    a.month >= b.month AND
+    a.month - b.month < 3
+GROUP BY
+    a.id, a.month
+HAVING
+    (a.id, a.month) NOT IN (
+        SELECT id, MAX(month)
+        FROM Employee
+        GROUP BY id
+    )
+ORDER BY
+    a.id, a.month DESC

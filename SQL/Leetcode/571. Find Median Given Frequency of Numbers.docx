@@ -1,0 +1,14 @@
+Problem URL - https://leetcode.com/problems/find-median-given-frequency-of-numbers
+
+SOLUTION - 
+
+SELECT AVG(t3.Number) AS median
+FROM Numbers AS t3
+JOIN
+  (SELECT t1.Number,
+          ABS(SUM(CASE WHEN t1.Number > t2.Number THEN t2.Frequency ELSE 0 END) -
+              SUM(CASE WHEN t1.Number < t2.Number THEN t2.Frequency ELSE 0 END)) AS count_diff
+   FROM Numbers AS t1, Numbers AS t2
+   GROUP BY t1.Number) AS T4
+ON t3.Number = T4.Number
+WHERE t3.Frequency >= T4.count_diff
