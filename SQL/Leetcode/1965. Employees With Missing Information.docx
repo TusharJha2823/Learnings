@@ -1,0 +1,25 @@
+Problem URL - https://leetcode.com/problems/employees-with-missing-information/description/
+
+SOLUTION - 
+
+-- select all employees from Employees not in Salaries, UNION select all employees from Salaries not in Employees
+
+select employee_id
+from Employees
+where employee_id not in 
+    (select employee_id
+    from Salaries)
+union 
+select employee_id
+from Salaries
+where employee_id not in 
+    (select employee_id
+    from Employees)
+order by 1
+
+
+-- adobe- 2
+    
+-- alternate    
+where employee_id not in (select employee_id from Salaries)
+order by 1
