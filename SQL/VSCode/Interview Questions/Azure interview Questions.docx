@@ -1,0 +1,30 @@
+What are Integration Runtimes (IR) in Azure? And how do you schedule in ADF?
+What are the different types of triggers in ADF?
+What’s the difference between ADLS and Blob Storage?
+What is redundancy in the Primary Region?
+What’s the difference between a Copy Activity parameterized template vs when Copy Activity has a query option?
+Difference between Copy Activity and Data Flow? Why use Data Flow when Copy Activity has a query option?
+How do you get past records using ADF?
+How do you separate bad files during a copy activity from ADLS to SQL?
+How do you get the latest files only during a copy activity?
+How to delete files older than 30 days?
+What is the Get Metadata activity and its components?
+How does Queue trigger dependency for a pipeline?
+How do you move files to an archive folder in ADLS?
+Scenario: Move multiple files from Control Flow and Data Flow dependencies for different file operations.
+Scenario: Copy files based on “customer” input to output container.
+Scenario: Copy only starting with filenames from “customer” and add a date in it.
+How did you implement Logic App for email notifications?
+What is the difference between Vault Control Flow project?
+Mini-Project 1: Full Load Implementation
+Mini-Project 2: Incremental Load Implementation
+Mini-Project 3: Implement SCD Type 2 in Data Flows
+What are the limitations of ADF activities?
+How do you troubleshoot or debug in ADF?
+Explain the difference between parameter and variable with examples.
+How do you read data from an API securely?
+How do you implement on-prem to ADLS data migration?
+How do you optimize your pipelines in ADF?
+How do you handle large file issues in ADF?
+How do you add dependencies to a pipeline in ADF?
+How do you connect a Databricks notebook to ADF?

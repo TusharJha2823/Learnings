@@ -5,3 +5,13 @@ SELECT firstName, lastName, city, state
 FROM Person p
 LEFT JOIN Address a
 USING (personId);
+
+PySpark Solution - 
+
+Assuming df_address and df_Person are the dataframes for the 2 tables
+
+df_joined = df_Person.join(df_address, df_Person["personId"] == df_address["personId"], "left")
+
+df_result = df_joined.select(col("firstName"), col("lastName"), col("city"), col("state"))
+
+df_result.show()
