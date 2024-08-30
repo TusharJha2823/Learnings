@@ -215,233 +215,489 @@ Answer :-
     Imputing: If you want to use statistical methods for replacement, imputing is a good approach.
 
 15. What is a partition in PySpark, and how do you control partitioning for better performance?
-16. Can you explain the difference between narrow and wide transformations in PySpark?
-17. How does PySpark infer schemas, and what are the implications of this?
-18. What role does SparkContext play in a PySpark application?
-19. How do you perform aggregations in PySpark, and what are the key considerations?
-20. What strategies do you use for caching data in PySpark to improve performance?
-21. What is ETL (Extract, Transform, Load)?
-22. What is a Data Warehouse?
-23. What is a Data Lake?
-24. What is the difference between a Data Warehouse and a Data Lake?
-25. What is batch processing?
-26. What is stream processing?
-27. What is the difference between batch processing and stream processing?
-28. What is a Lambda Architecture?
-29. What are the components of a Lambda Architecture?
-30. What is a Kappa Architecture?
-31. What is a scalable system?
-32. How do you approach a system design interview?
-33. What is the difference between horizontal and vertical scaling?
-34. What are the advantages of horizontal scaling?
-35. What is a load balancer?
-36. How does a load balancer improve system reliability?
-37. What is caching?
-38. What are the types of caches?
-39. What is database replication?
-40. What are the benefits of database replication?
-41. Explain how PySpark handles schema validation.
-42. How can you broadcast variables in PySpark?
-43. What are the different ways to run Spark jobs on a cluster?
-44. Describe PySpark UDFs and their use cases.
-45. How do you optimize a PySpark job?
-46. Explain the concept of lineage in PySpark.
-47. What are accumulators, and how do you use them?
-48. How do you manage memory in PySpark?
-49. What is the significance of the DAG (Directed Acyclic Graph) in Spark?
-50. Explain how to perform data partitioning in PySpark.
-51. How do you handle skewed data in PySpark?
-52. What is a PySpark RDD, and how does it differ from DataFrames?
-53. Describe the PySpark Catalyst Optimizer.
-54. How do you perform joins in PySpark, and what types are available?
-55. What is the role of the SparkContext in PySpark?
-56. How do you handle missing or null values in PySpark?
-57. What is the difference between partitioning and Bucketing?
-58. What is the advantage and disadvantage of UDF in Spark/PySpark?
-59. How can you persist and cache data in PySpark?
-60. What is the speculative execution?
-61. Difference between Static Partitioning and Dynamic Partitioning ?
-62. How do you handle job failures in an ETL pipeline?
-63. What steps do you take when a data pipeline is running slower than expected?
-64. How do you address data quality issues in a large dataset?
-65. What would you do if a scheduled job didn't trigger as expected?
-66. How do you troubleshoot memory-related issues in Spark jobs?
-67. What is your approach to handling schema changes in source systems?
-68. How do you manage data partitioning in large-scale data processing?
-69. What do you do if data ingestion from a third-party API fails?
-70. How do you resolve issues with data consistency between different data stores?
-71. How do you handle out-of-memory errors in a Spark job?
-72. What steps do you take when a data job exceeds its allocated time window?
-73. How do you manage and monitor data pipeline dependencies?
-74. What do you do if the output of a data transformation step is incorrect?
-75. How do you address issues with data duplication in a pipeline?
-76. How do you handle and log errors in a distributed data processing job?
-77. Can you explain your project flow and architecture?
-78. What is the default file format used in Spark?
-79. Why is Parquet commonly used in Spark?
-80. What optimization techniques have you implemented in your projects?
-81. Can you explain the difference between 'groupByKey' and 'reduceByKey' in Spark? Which one is more efficient?
-82. What do you understand by rack awareness in Hadoop?
-83. What file formats do you typically use in your data processing workflows?
-84. How does fault tolerance work in Spark?
-85. How would you handle and ignore null values while loading data?
-86. How would you find the 3rd highest salary in a dataset?
-87. Given a dataset with positive and negative invoice values, how would you convert the positive values to negative while keeping the negative values unchanged?
-88. How can you convert a date like "20/04/1963" to an integer format?
-89. Given a dataset containing alphanumeric values and integers, how would you extract specific alphanumeric sequences like "ML," "GM," and "LTR" and create a new DataFrame to view only these sequences in Spark?
-90. What kind of questions have you encountered related to data modeling in your projects?
+Answer :- 
+    In PySpark, partitioning is a method of dividing large datasets into smaller, more manageable units called partitions. It's a fundamental unit of parallelism, and organizing data into partitions can significantly improve performance. Here's how partitioning works and how you can control it: 
+    
+    Distribution - By distributing data across multiple partitions, Spark can execute operations in parallel, using the full power of a cluster. 
 
-Delta li
-asdFaerwt3aekERAWTve tables 
+    Management - Partitioning enables Spark to process large amounts of data in parallel by distributing computation across multiple nodes, each handling a subset of the total data. 
+    
+    Controlling partitions - You can dynamically change Spark partitions using methods like repartition() and coalesce() to increase or decrease the number of partitions based on data distribution. 
+    
+    Repartition - Use repartition() when you need to increase or decrease the number of partitions in an RDD, DataFrame, or Dataset. However, repartition() is an expensive operation and should be used sparingly, especially when dealing with large datasets. 
+    
+    Coalesce - The coalesce method in PySpark DataFrame allows users to reduce the number of partitions in a DataFrame without triggering a full shuffle. Unlike repartition, which involves a full shuffle operation, coalesce minimizes data movement by merging partitions on the same executor node whenever possible. 
+
+    PartitionBy - Use the partitionBy() method to partition data based on one or multiple columns while writing to disk. This creates sub-directories for each partition. 
+    
+    Balancing - After active shuffling of data (operations like groupBy, sort, join) your partitions are going to have not equal amount of data, some of them can contain nothing, some — too much. You can repartition your dataset using repartitionByRange. 
+    
+    Data skew - Data in partitions that are not evenly distributed is called Data Skew. Operations such as join perform very slow on this partitions. 
+    
+    Number of partitions - Having too few or too many partitions is not good. Too few can cause less concurrency, data skewing and improper resource utilization, while too many can cause task scheduling to take more time than actual execution time. 
+    
+    Avoid single partition computation - Avoid computation on single partition. Some APIs such as DataFrame.rank use PySpark's Window without specifying partition specification. This moves all data into a single partition in a single machine. 
+    
+    Dynamic partition pruning - Spark Dynamic Partition Pruning is a powerful optimization technique that can significantly improve the performance of queries in big data processing. By selectively scanning only the relevant partitions, it reduces unnecessary data processing and enhances query efficiency. 
+
+16. Can you explain the difference between narrow and wide transformations in PySpark?
+Answer :- 
+    In PySpark, narrow transformations are more efficient and require less data movement compared to wide transformations. Narrow transformations are also called narrow dependencies. Here's a breakdown of the differences: 
+    Narrow transformations - Each input partition contributes to only one output partition. They don't require shuffling data across partitions, making them faster and simpler. Examples include map and filter. 
+    Wide transformations - Each input partition may contribute to multiple output partitions. They require shuffling data across multiple partitions. Examples include groupByKey, reduceByKey, and join.
+
+17. How does PySpark infer schemas, and what are the implications of this?
+Answer :- 
+    PySpark uses schema inference to automatically determine the data types for each column in a dataset based on the data values, when the user sets inferSchema to True. This is useful when there is no predefined schema for the data. Here are some implications of using schema inference in PySpark: 
+    
+    Performance - When Spark knows the schema in advance, it can optimize operations for faster query performance and more efficient resource usage. 
+    
+    Data quality - The choice between inferring or defining the schema can impact data quality. 
+    
+    Predictable processing - A predefined schema makes the data structure and types predictable, which can make collaboration between teams easier. 
+    
+    Rescued data column - When Auto Loader infers the schema, it automatically adds a rescued data column to the schema. This column contains data that doesn't match the schema, such as columns that are missing, or have type or case mismatches.
+
+18. What role does SparkContext play in a PySpark application?
+Answer :- 
+    
+19. How do you perform aggregations in PySpark, and what are the key considerations?
+Answer :- 
+    
+20. What strategies do you use for caching data in PySpark to improve performance?
+Answer :- 
+    
+21. What is ETL (Extract, Transform, Load)?
+Answer :- 
+    
+22. What is a Data Warehouse?
+Answer :- 
+    
+23. What is a Data Lake?
+Answer :- 
+    
+24. What is the difference between a Data Warehouse and a Data Lake?
+Answer :- 
+    
+25. What is batch processing?
+Answer :- 
+    
+26. What is stream processing?
+Answer :- 
+    
+27. What is the difference between batch processing and stream processing?
+Answer :- 
+    
+28. What is a Lambda Architecture?
+Answer :- 
+    
+
+29. What are the components of a Lambda Architecture?
+Answer :- 
+    
+30. What is a Kappa Architecture?
+Answer :- 
+    
+31. What is a scalable system?
+Answer :- 
+    
+32. How do you approach a system design interview?
+Answer :- 
+    
+33. What is the difference between horizontal and vertical scaling?
+Answer :- 
+    
+34. What are the advantages of horizontal scaling?
+Answer :- 
+    
+35. What is a load balancer?
+Answer :- 
+    
+36. How does a load balancer improve system reliability?
+Answer :- 
+    
+37. What is caching?
+Answer :- 
+    
+38. What are the types of caches?
+Answer :- 
+    
+39. What is database replication?
+Answer :- 
+    
+40. What are the benefits of database replication?
+Answer :- 
+    
+41. Explain how PySpark handles schema validation.
+Answer :- 
+    
+42. How can you broadcast variables in PySpark?
+Answer :- 
+    
+43. What are the different ways to run Spark jobs on a cluster?
+Answer :- 
+    
+44. Describe PySpark UDFs and their use cases.
+Answer :- 
+    
+45. How do you optimize a PySpark job?
+Answer :- 
+    
+46. Explain the concept of lineage in PySpark.
+Answer :- 
+    
+47. What are accumulators, and how do you use them?
+Answer :- 
+    
+48. How do you manage memory in PySpark?
+Answer :- 
+    
+49. What is the significance of the DAG (Directed Acyclic Graph) in Spark?
+Answer :- 
+    
+50. Explain how to perform data partitioning in PySpark.
+Answer :- 
+    
+51. How do you handle skewed data in PySpark?
+Answer :- 
+    
+52. What is a PySpark RDD, and how does it differ from DataFrames?
+Answer :- 
+    
+53. Describe the PySpark Catalyst Optimizer.
+Answer :- 
+    
+54. How do you perform joins in PySpark, and what types are available?
+Answer :- 
+    
+55. What is the role of the SparkContext in PySpark?
+Answer :- 
+    
+56. How do you handle missing or null values in PySpark?
+Answer :- 
+    
+57. What is the difference between partitioning and Bucketing?
+Answer :- 
+    
+58. What is the advantage and disadvantage of UDF in Spark/PySpark?
+Answer :- 
+    
+59. How can you persist and cache data in PySpark?
+Answer :- 
+    
+60. What is the speculative execution?
+Answer :- 
+    
+61. Difference between Static Partitioning and Dynamic Partitioning ?
+Answer :- 
+    
+62. How do you handle job failures in an ETL pipeline?
+Answer :- 
+    
+63. What steps do you take when a data pipeline is running slower than expected?
+Answer :- 
+    
+64. How do you address data quality issues in a large dataset?
+Answer :- 
+    
+65. What would you do if a scheduled job didn't trigger as expected?
+Answer :- 
+    
+66. How do you troubleshoot memory-related issues in Spark jobs?
+Answer :- 
+    
+67. What is your approach to handling schema changes in source systems?
+Answer :- 
+    
+68. How do you manage data partitioning in large-scale data processing?
+Answer :- 
+    
+69. What do you do if data ingestion from a third-party API fails?
+Answer :- 
+    
+70. How do you resolve issues with data consistency between different data stores?
+Answer :- 
+    
+71. How do you handle out-of-memory errors in a Spark job?
+Answer :- 
+    
+72. What steps do you take when a data job exceeds its allocated time window?
+Answer :- 
+    
+73. How do you manage and monitor data pipeline dependencies?
+Answer :- 
+    
+74. What do you do if the output of a data transformation step is incorrect?
+Answer :- 
+    
+75. How do you address issues with data duplication in a pipeline?
+Answer :- 
+    
+76. How do you handle and log errors in a distributed data processing job?
+Answer :- 
+    
+77. Can you explain your project flow and architecture?
+Answer :- 
+    
+78. What is the default file format used in Spark?
+Answer :- 
+    
+79. Why is Parquet commonly used in Spark?
+Answer :- 
+    
+80. What optimization techniques have you implemented in your projects?
+Answer :- 
+    
+81. Can you explain the difference between 'groupByKey' and 'reduceByKey' in Spark? Which one is more efficient?
+Answer :- 
+    
+82. What do you understand by rack awareness in Hadoop?
+Answer :- 
+    
+83. What file formats do you typically use in your data processing workflows?
+Answer :- 
+    
+84. How does fault tolerance work in Spark?
+Answer :- 
+    
+85. How would you handle and ignore null values while loading data?
+Answer :- 
+    
+86. How would you find the 3rd highest salary in a dataset?
+Answer :- 
+    
+87. Given a dataset with positive and negative invoice values, how would you convert the positive values to negative while keeping the negative values unchanged?
+Answer :- 
+    
+88. How can you convert a date like "20/04/1963" to an integer format?
+Answer :- 
+    
+89. Given a dataset containing alphanumeric values and integers, how would you extract specific alphanumeric sequences like "ML," "GM," and "LTR" and create a new DataFrame to view only these sequences in Spark?
+Answer :- 
+    
+90. What kind of questions have you encountered related to data modeling in your projects?
+Answer :- 
+    
+Delta live tables 
 
 91. What are Delta Live Tables and how do they work?
-
+Answer :- 
+    
 92. How can Delta Live Tables improve data pipeline development and management?
-
+Answer :- 
+    
 93. Describe the process of building and deploying a data pipeline using Delta Live Tables.
-
+Answer :- 
+    
 94. What are the benefits of using Delta Live Tables in a data lakehouse?
-
+Answer :- 
+    
 95. How can Delta Live Tables ensure data quality and reliability in real-time analytics?
-
+Answer :- 
+    
 96. What are the challenges of parsing unstructured data such as images and textual data?
-
+Answer :- 
+    
 97. What are the key components of a data lakehouse architecture?
-
+Answer :- 
+    
 98. How do you ensure data quality and consistency in a real-time analytics system?
-
+Answer :- 
+    
 99. How do you handle large volumes of event data in a lakehouse?
-
+Answer :- 
+    
 100. How can you handle incomplete or poor-quality data in regulatory reporting?
-
+Answer :- 
+    
 
 
 Azure Databricks
 
 101. What are the key features of Azure Databricks?
-
+Answer :- 
+    
 102. Which cloud services include Azure Databricks?
-
+Answer :- 
+    
 103. What programming languages does Azure Databricks support?
-
+Answer :- 
+    
 104. Can you explain the management plane in Azure Databricks?
-
+Answer :- 
+    
 105. What are the benefits of using Microsoft Azure Databricks?
-
+Answer :- 
+    
 106. What pricing models are available for Azure Databricks?
-
+Answer :- 
+    
 107. What is a Databricks Unit (DBU) in Azure Databricks?
-
+Answer :- 
+    
 108. Can you describe the DBU Framework in Azure Databricks?
-
+Answer :- 
+    
 109. What is a DataFrame in Azure Databricks?
-
+Answer :- 
+    
 110. What is caching, and what are its types?
-
+Answer :- 
+    
 111. What are clusters and instances in Azure Databricks?
-
+Answer :- 
+    
 112. What is a Delta Lake Table?
-
+Answer :- 
+    
 113. How are widgets used in Azure Databricks?
-
+Answer :- 
+    
 114. What challenges might you face with Azure Databricks?
-
+Answer :- 
+    
 115. What is the control plane in Azure Databricks?
-
+Answer :- 
+    
 116. What are collaborative workspaces in Azure Databricks?
-
+Answer :- 
+    
 117. What is serverless database processing in Azure Databricks?
-
+Answer :- 
+    
 118. How is Kafka used in Azure Databricks?
-
+Answer :- 
+    
 119. How do you process large datasets in Azure Databricks?
-
+Answer :- 
+    
 120. How do you troubleshoot issues in Azure Databricks?
-
+Answer :- 
+    
 121. How do you secure sensitive data in Azure Databricks?
-
+Answer :- 
+    
 
 
 
 122. How do you deploy PySpark applications in a production environment?
-
+Answer :- 
+    
 123. What are some best practices for monitoring and logging PySpark jobs?
-
+Answer :- 
+    
 124. How do you manage resources and scheduling in a PySpark application?
-
+Answer :- 
+    
 125. Write a PySpark job to perform a specific data processing task (e.g., filtering data, aggregating results).
-
+Answer :- 
+    
 126. You have a dataset containing user activity logs with missing values and inconsistent data types. Describe how you would clean and standardize this dataset using PySpark.
-
+Answer :- 
+    
 127. Given a dataset with nested JSON structures, how would you flatten it into a tabular format using PySpark?
-
+Answer :- 
+    
 128. Your PySpark job is running slower than expected due to data skew. Explain how you would identify and address this issue.
-
+Answer :- 
+    
 129. You need to join two large datasets, but the join operation is causing out-of-memory errors. What strategies would you use to optimize this join?
-
+Answer :- 
+    
 130. Describe how you would set up a real-time data pipeline using PySpark and Kafka to process streaming data.
-
+Answer :- 
+    
 131. You are tasked with processing real-time sensor data to detect anomalies. Explain the steps you would take to implement this using PySpark
-
+Answer :- 
+    
 132. Describe how you would design and implement an ETL pipeline in PySpark to extract data from an RDBMS, transform it, and load it into a data warehouse.
-
+Answer :- 
+    
 133. Given a requirement to process and transform data from multiple sources (e.g., CSV, JSON, and Parquet files), how would you handle this in a PySpark job?
-
+Answer :- 
+    
 134. You need to integrate data from an external API into your PySpark pipeline. Explain how you would achieve this.
-
+Answer :- 
+    
 135. Describe how you would use PySpark to join data from a Hive table and a Kafka stream.
-
+Answer :- 
+    
 136. You need to integrate data from an external API into your PySpark pipeline. Explain how you would achieve this.
-
+Answer :- 
+    
 
 137. Can you explain the differences between a DataFrame and an RDD in PySpark?
-
+Answer :- 
+    
 138. What techniques would you use to optimize the performance of PySpark code?
-
+Answer :- 
+    
 139. How does the Catalyst Optimizer contribute to query execution in PySpark?
-
+Answer :- 
+    
 140. Which serialization formats are commonly used in PySpark, and why?
-
+Answer :- 
+    
 141. How do you address skewed data issues in PySpark?
-
+Answer :- 
+    
 142. Could you describe how memory management is handled in PySpark?
-
+Answer :- 
+    
 143. What are the different types of joins in PySpark, and how do you implement them?
-
+Answer :- 
+    
 144. What is the purpose of the 'broadcast() function in PySpark, and when should it be used?
-
+Answer :- 
+    
 145. How do you define and use User-Defined Functions (UDFs) in PySpark?
-
+Answer :- 
+    
 146. What is lazy evaluation in PySpark, and how does it affect job execution?
-
+Answer :- 
+    
 147. What are the steps to create a DataFrame in PySpark?
-
+Answer :- 
+    
 148. Could you explain the concept of Resilient Distributed Datasets (RDD) in PySpark?
-
+Answer :- 
+    
 149. What are actions and transformations in PySpark, and how do they differ?
-
+Answer :- 
+    
 150. How do you manage and handle null values in PySpark DataFrames?
-
+Answer :- 
+    
 151. What are the different spark.read formats?
-
+Answer :- 
+    
 152.For a 16 node cluster with 16 cores each calculate the number of executors
-
+Answer :- 
+    
 153. where do you use repartition and coalesce. give few scenarios.
-
+Answer :- 
+    
 154. write the dataframe to a delta table specifying catalog, schema and table name
-
+Answer :- 
+    
 155.How do you use unity catalog for data governance in your project
-
+Answer :- 
+    
 156.Define ACID properties and cap theorem
-
+Answer :- 
+    
 157.What is data modeling
-
+Answer :- 
+    
 158.what is fact and dimension tables?
-
+Answer :- 
+    
 159.Mention some dbutils functions ad its uses
-
+Answer :- 
+    
 160.what is CDC(change data capture)?
-
+Answer :- 
+    
 
 
 
@@ -454,44 +710,89 @@ Azure Data Factory (ADF)
 Easy Questions
 
 161. What is Azure Data Factory used for?
+Answer :- 
+    
 162. Explain the concept of a pipeline in ADF.
+Answer :- 
+    
 163. What is a linked service in ADF?
+Answer :- 
+    
 164. How do you schedule a pipeline in ADF?
+Answer :- 
+    
 165. What is a dataset in the context of ADF?
-
+Answer :- 
+    
 Tough Questions
 166. Explain the differences between Mapping Data Flows and Wrangling Data Flows in ADF.
+Answer :- 
+    
 167. How would you implement dynamic pipeline execution in ADF?
+Answer :- 
+    
 168. Describe the process of implementing incremental load patterns using ADF.
+Answer :- 
+    
 169. How do you handle error logging and notifications in ADF pipelines?
+Answer :- 
+    
 170. Explain the concept of integration runtime in ADF and its types.
-
+Answer :- 
+    
 PySpark
 Easy Questions
 
 171. What is PySpark?
+Answer :- 
+    
 172. How do you create a SparkSession in PySpark?
+Answer :- 
+    
 173. Explain the difference between an RDD and a DataFrame in PySpark.
+Answer :- 
+    
 174. What is a transformation in PySpark? Give an example.
+Answer :- 
+    
 175. How do you read CSV file in PySpark?
-
+Answer :- 
+    
 Databricks
 
 176. Explain the architecture of Delta Lake in Databricks and its benefits.
+Answer :- 
+    
 177. How would you implement multi-hop architecture in Databricks?
+Answer :- 
+    
 178. Describe the process of implementing auto-scaling in Databricks clusters.
+Answer :- 
+    
 179. How do you optimize Databricks Delta table performance?
+Answer :- 
+    
 180. Explain the concept of Databricks Unity Catalog and how it enhances data governance.
-
+Answer :- 
+    
 Dimensional Modeling
 Tough Questions
 
 181. Describe the process of designing a slowly changing dimension (SCD) Type 2.
+Answer :- 
+    
 182. How would you handle a many-to-many relationship in dimensional modeling?
+Answer :- 
+    
 183. Explain the concept of a junk dimension and when you would use it.
+Answer :- 
+    
 184. Describe the pros and cons of using a snowflake schema versus a star schema.
+Answer :- 
+    
 185. How would you design a dimension to handle hierarchical data?
-
+Answer :- 
+    
 186. What is a Star Schema and how does it differ from a Snowflake Schema?
 Answer :- 
     A Star Schema is a data warehouse schema that consists of a central fact table surrounded by dimension tables. A Snowflake Schema is a more normalized version of a Star Schema, where each dimension table is further divided into multiple related tables.
@@ -519,12 +820,12 @@ Answer :-
     Materialized Views, on the other hand, store the query results physically, offering precomputed data for faster read operations. They require periodic refreshes to ensure data accuracy. These views are particularly useful for improving performance in complex queries and storing aggregated data for quick access.
 
 192. How can I address data skewness using repartitioning?
-Answer:- 
+Answer :- 
     Repartition the DataFrame by a column with high cardinality to ensure more balanced data distribution.
     PySpark Code - df = df.repartition("columnName") # Use a column with High cardinality
 
 193. What is the process for salting to mitigate data skewness?
-Answer:- 
+Answer :- 
     Add a salt function to distribute the data more evenly and create a new key.
     
     PySpark Code - 
@@ -534,14 +835,14 @@ Answer:-
 
 
 194. How can I optimize joins to reduce data skewness?
-Answer:- 
+Answer :- 
     Use broadcast for smaller tables to join with high cardinality performance.
     from pyspark.sql.functions import broadcast
     PySpark Code - df = df.join(broadcast(small_df), "join_column")
 
 
 195. Explain the difference between Caching and Persisting in Spark?
-Answer:- 
+Answer :- 
     𝗖𝗮𝗰𝗵𝗶𝗻𝗴: Caching in Apache Spark involves storing RDDs in memory temporarily. When an RDD is cached, its partitions are kept in memory across multiple operations, allowing for faster access and reuse of intermediate results.
 
     𝗣𝗲𝗿𝘀𝗶𝘀𝘁𝗶𝗻𝗴: Persisting in Apache Spark is similar to caching but offers more flexibility in terms of storage options. When you persist an RDD, you can specify different storage levels such as MEMORY_ONLY, MEMORY_AND_DISK, or DISK_ONLY, depending on your requirements
@@ -561,87 +862,216 @@ Answer:-
     - Spark employs a lazy evaluation strategy, so RDDs are not actually cached or persisted until an action is triggered. When an action is called on a cached or persisted RDD, Spark checks if the data is already in memory or on disk. If not, it calculates the RDD's partitions and stores them accordingly based on the specified storage level.
 
 196. Explain Spark Architecture.
+Answer :-
+
 
 197. What is Z-ordering?
-
+Answer :-
+    
 198. Difference between Datamart, Datawarehouse and Deltalake
-
+Answer :-
+    
 199. Compare performance of Managed and External Table
-
+Answer :-
+    
 200. Difference between blob Store and ADLS Gen2    
-
+Answer :-
+    
 
 _________________________________________________________________________________________________________
 
 KPMG / EY / PwC / Deloitte Consulting PySpark interview questions for Data Engineers
 
 201. How do you optimize the performance of your PySpark jobs?
+Answer :-
+    
 202. Can you discuss the techniques you use to handle skewed data in PySpark?
-203. Can you describe how you’ve applied Spark optimization techniques in your previous roles?
-204. Could you provide an overview of your experience with PySpark and big data processing?
-205. Can you explain the basic architecture of PySpark in detail?
-206. What are the differences between a DataFrame and an RDD in PySpark, and in what scenarios would you use an RDD?
-207. How does PySpark relate to Apache Spark, and what advantages does it offer for distributed data processing?
-208. Can you explain the concepts of transformations and actions in PySpark?
-209. Could you provide examples of PySpark DataFrame operations that you frequently use?
-210. How does data serialization work in PySpark?
-211. Can you discuss the significance of choosing the right compression codec for your PySpark applications?
-212. How do you handle missing or null values in PySpark?
-213. Are there any specific strategies or functions you prefer for handling missing data in PySpark?
-214. What are some common challenges you’ve encountered while working with PySpark, and how have you overcome them?
-215. How do you ensure data quality and integrity when processing large datasets with PySpark?
-216. Can you share an example of a complex PySpark project you’ve worked on and the results you achieved?
+Answer :-
 
+203. Can you describe how you’ve applied Spark optimization techniques in your previous roles?
+Answer :-
+    
+204. Could you provide an overview of your experience with PySpark and big data processing?
+Answer :-
+    
+205. Can you explain the basic architecture of PySpark in detail?
+Answer :-
+    
+206. What are the differences between a DataFrame and an RDD in PySpark, and in what scenarios would you use an RDD?
+Answer :-
+    
+207. How does PySpark relate to Apache Spark, and what advantages does it offer for distributed data processing?
+Answer :-
+    
+208. Can you explain the concepts of transformations and actions in PySpark?
+Answer :-
+    
+209. Could you provide examples of PySpark DataFrame operations that you frequently use?
+Answer :-
+    
+210. How does data serialization work in PySpark?
+Answer :-
+    
+211. Can you discuss the significance of choosing the right compression codec for your PySpark applications?
+Answer :-
+    
+212. How do you handle missing or null values in PySpark?
+Answer :-
+    
+213. Are there any specific strategies or functions you prefer for handling missing data in PySpark?
+Answer :-
+    
+214. What are some common challenges you’ve encountered while working with PySpark, and how have you overcome them?
+Answer :-
+    
+215. How do you ensure data quality and integrity when processing large datasets with PySpark?
+Answer :-
+    
+216. Can you share an example of a complex PySpark project you’ve worked on and the results you achieved?
+Answer :-
+    
 _________________________________________________________________________________________________________
 Deloitte PySpark interview questions for Data Engineer 2024
 
 217. Can you provide an overview of your experience working with PySpark and big data processing?
+Answer :-
+    
 218. What motivated you to specialize in PySpark, and how have you applied it in your previous roles?
+Answer :-
+    
 219. Explain the basic architecture of PySpark.
+Answer :-
+    
 220. How does PySpark relate to Apache Spark, and what advantages does it offer in distributed data processing?
+Answer :-
+    
 221. Describe the difference between a DataFrame and an RDD in PySpark.
+Answer :-
+    
 222. Can you explain transformations and actions in PySpark DataFrames?
+Answer :-
+    
 223. Provide examples of PySpark DataFrame operations you frequently use.
+Answer :-
+    
 224. How do you optimize the performance of PySpark jobs?
+Answer :-
+    
 225. Can you discuss techniques for handling skewed data in PySpark?
+Answer :-
+    
 226. Explain how data serialization works in PySpark.
+Answer :-
+    
 227. Discuss the significance of choosing the right compression codec for your PySpark applications.
+Answer :-
+    
 228. How do you deal with missing or null values in PySpark DataFrames?
+Answer :-
+    
 229. Are there any specific strategies or functions you prefer for handling missing data?
+Answer :-
+    
 230. Describe your experience with PySpark SQL.
+Answer :-
+    
 2️31. How do you execute SQL queries on PySpark DataFrames?
+Answer :-
+    
 232. What is broadcasting, and how is it useful in PySpark?
+Answer :-
+    
 233. Provide an example scenario where broadcasting can significantly improve performance.
+Answer :-
+    
 234. Discuss your experience with PySpark’s MLlib.
+Answer :-
+    
 235. Can you give examples of machine learning algorithms you’ve implemented using PySpark?
+Answer :-
+    
 236. Describe the importance of logging in PySpark applications.
+Answer :-
+    
 237. Have you integrated PySpark with other big data technologies or databases? If so, please provide examples.
+Answer :-
+    
 238. How do you handle data transfer between PySpark and external systems?
+Answer :-
+    
 239. Explain the project that you worked on in your previous organizations.
+Answer :-
+    
 240. Describe a challenging PySpark project you’ve worked on. What were the key challenges, and how did you overcome them?
+Answer :-
+    
 241. Explain your experience with cluster management in PySpark.
+Answer :-
+    
 242. How do you scale PySpark applications in a cluster environment?
-243. Can you name and briefly describe some popular libraries or tools in the PySpark ecosystem, apart from the core PySpark functionality?
+Answer :-
+    
+243. Can you name and briefly describe some popular libraries or tools in the PySpark ecosystem, apart from the core PySpark 
+functionality?
+Answer :-
+    
 244. What cluster Manager have you used in your project?
+Answer :-
+    
 245. How does your data come to your storage location?
+Answer :-
+    
 246. What is the cluster size?
+Answer :-
+    
 247. What are the other sources you have used in your project?
+Answer :-
+    
 2️48. What is the frequency of your data in your source?
+Answer :-
+    
 249. What is the sink for the project?
+Answer :-
+    
 2️50. What is the volume of your data?
+Answer :-
+    
 251. Please explain your task details completed. Let’s say out of 100 tasks, 99 tasks are completed, however, the last task is taking long hours to finish/complete. How do you handle this issue?
+Answer :-
+    
 252. What challenges have you faced and how did you overcome them?
+Answer :-
+    
 253. What optimization technique have you used in your project and what is the reason for it? Have you done spark optimization tuning? If yes, how have you done that?
+Answer :-
+    
 254. Can you please walk me through the spark-submit command?
+Answer :-
+    
 255. Let’s say you are getting your data volume is 100 GB. In your spark, you are doing 5 actions and 3 transformations on the data. Explain what goes behind the scene with respect to stages and tasks.
+Answer :-
+    
 256. How do you take your code to the higher environment?
+Answer :-
+    
 257. How do you schedule your job in production?
+Answer :-
+    
 258. How do you reprocess the data if it failed?
+Answer :-
+    
 259. Tell me one scenario where you have gone wrong with your decision making and what you have learnt from that mistake.
+Answer :-
+    
 260. Let’s say you have noticed duplicate records loaded in the table for a particular partition. How do you resolve such issues?
+Answer :-
+    
 261. What is the frequency of your jobs?
+Answer :-
+    
 262. How do you notify your business/stakeholders in case of any job failure?
-
+Answer :-
+    
 
 
 Coding Questions: Pyspark:
