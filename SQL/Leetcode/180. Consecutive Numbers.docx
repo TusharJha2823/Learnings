@@ -9,3 +9,26 @@ SELECT DISTINCT l1.num as ConsecutiveNums
 FROM Logs l1,  Logs l2,  Logs l3
 WHERE l1.id = l2.id -1 AND  l2.id = l3.id -1
 AND l1.num = l2.num AND l2.num = l3.num
+
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("ConsecutiveNums").getOrCreate()
+
+# Assuming your Logs data is stored in a DataFrame named logs_df
+logs_df = spark.read.format("parquet") \
+                 .load("path/to/your/logs_data")  # Replace with your data source
+
+
+joins_result_df = logs_df.alias("l1")\
+                    .join(logs_df.alias("l2"), on = (col("l1.id") == col("l2.id")-1), "inner")\
+                    .join(logs_df.alias("l3"), on = (col("l2.id") == col("l3.id")-1), "inner")\
+                    .where((col("l1.num") == (col("l2.num")) & (col("l2.num") == (col("l3.num")))))
+consecutive_df = joins_result_df.select(col(l1.num).alias("ConsecutiveNums")).distinct()     
+
+consecutive_nums_df.write.parquet("path/to/your/output/parquet/file")
+

@@ -19,3 +19,26 @@ BEGIN
   );
 END;
 $$ LANGUAGE plpgsql;
+
+Pyspark solution  - 
+
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("NthHighestSalary").getOrCreate()
+
+nth_val = int(input("Enter the NthHighestSalary: "))
+
+window = Window.orderBy(col(df_employee.salary).desc())
+
+df_dnrk = df_employee.withColumn("drnk", dense_rank().over(window))
+
+df_cte = df_dnrk.select("salary", "drnk")
+
+df_result = df_cte.select(col("salary")).where(col("drnk")== nth_val).limit(1)
+
+df_result.write.parquet("filepath")
+
+

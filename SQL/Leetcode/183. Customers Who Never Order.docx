@@ -12,3 +12,19 @@ WHERE c.id not in (
 -- apple- 7
 -- bloomberg- 5
 -- adobe- 2
+
+Pyspark solution  - 
+
+from pyspark.sql.types import *
+from pyspark.sql.functions impost *
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("Customers who never order").getOrCreate()
+
+df_orders_customerId = df_Orders.alias("o").select(col(o.customerId).alias("customerId"))
+
+df_customer_without_orders = df_Customers.alias("c")\
+                                .join(df_orders_customerId, on = (col(c.id) == col(df_orders_customerId.customerId)), "left_anti")
+
+df_result = df_customer_without_orders.select("df_customer_without_orders.name").alias("Customers")                            
+df_result.write.parquet("file_path")

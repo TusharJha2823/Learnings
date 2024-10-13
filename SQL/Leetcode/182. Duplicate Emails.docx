@@ -8,3 +8,18 @@ Select email
 From Person
 group by email
 having count(email) > 1
+
+
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql import SparkSession
+
+df_result = df_person.groupBy(col("email")).agg(count(col("email").alias("email_count")))
+
+df_result = df_result.filter(col("email_count") > 1)
+
+df_result = df_result.select(col("email"))
+
+df_result.write.parquet("file_path")

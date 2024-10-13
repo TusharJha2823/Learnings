@@ -15,3 +15,5 @@ df_joined = df_Person.join(df_address, df_Person["personId"] == df_address["pers
 df_result = df_joined.select(col("firstName"), col("lastName"), col("city"), col("state"))
 
 df_result.show()
+
+df_result.write.parquet("filepath")

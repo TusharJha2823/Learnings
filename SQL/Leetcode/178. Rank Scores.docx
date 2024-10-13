@@ -4,3 +4,11 @@ SOLUTION -
 SELECT score,
     DENSE_RANK() OVER(ORDER BY score DESC) AS "rank"
 FROM scores
+
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+result = df_scores.withColumn("rank", dense_rank().over(Window.orderBy("score").desc())).show()

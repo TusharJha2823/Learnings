@@ -8,3 +8,18 @@ FROM Employee e1
 JOIN Employee e2
 ON e2.managerId = e1.id
 WHERE e2.salary > e1.salary ;
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("employees").getOrCreate()
+
+df_join = df_employee.alias("e1")\
+            .join(df_employee.alias("e2"), on = (col(e2.managerId) == col(e1.id)), "inner")\
+            .where(col(e2.salary) > col(e1.salary))
+
+df_result = df_join.select(col(e2.name).alias("Employee"))   
+
+df_result.write.parquet("filepath")

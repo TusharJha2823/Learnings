@@ -19,3 +19,21 @@ WITH CTE AS (
  LEFT JOIN Department 
  ON CTE.departmentId  = Department.id 
  WHERE rnk <= 3 
+
+Pyspark solution  - 
+from pyspark.sql import *
+spark = SparkSession.builder.appName("Department Top 3 Salary").getOrCreate()
+
+window = Window.partitionBy(col("df_Employee.departmentId")).orderBy(col("df_Employee.salary").desc())
+
+df_cte = df_Employee.select("id", col("name").alias("Employee"), salary, departmentId)\
+                     .withColumn("rnk", dense_rank().over(window))
+df_cte = df_cte.filter(col("rnk")< = 3)
+
+df_result = df_cte.alias("cte")\
+               .join(df_Department.alias("d"), on = (col("cte.departmentId") == col("Department.id")), "left")
+df_result = df_result.select(col("d.name").alias("Department"), col("Employee"), col("Salary"))
+
+df_result.write.parquet("filepathc")
+
+

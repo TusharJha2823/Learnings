@@ -15,3 +15,19 @@ FROM CTE
 LEFT JOIN Department d
 ON CTE.departmentId = d.id
 WHERE rn = 1
+
+Pyspark solution  - 
+from pyspark.sql import *
+spark = SparkSession.builder.appName("Department Highest Salary").getOrCreate()
+
+window = Window.partitionBy(col("df_Employee.departmentId")).orderBy(col("df_Employee.salary").desc())
+
+df_rnk = df_Employee.withColumn("rn", rank().over(window))
+
+df_rnk_1 = df_rnk.where(col("df_rnk.rn") == 1)
+
+df_result = df_rnk.alias("cte").join(df_Department.alias("d"), on = (col("cte.departmentId") == col("d.id")), "left")
+
+df_result = df_result.select(col("d.name").alias("Department"), col("cte.name").alias("Employee"),col("cte.salary").alias("Salary"))
+
+df_result.write.parquet("filepath")

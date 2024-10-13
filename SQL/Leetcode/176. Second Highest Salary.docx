@@ -8,6 +8,9 @@ SELECT MAX(e1.salary) AS "SecondHighestSalary"
 FROM Employee e1 INNER JOIN Employee e2
 ON e1.salary< e2.salary
 
+Pyspark solution  - 
+result = df_employee.join(df_employee.alias("e2"), df[salary]< e2[salary], "inner")\
+        .agg(max("col")).show()
 
 SOLUTION 2 - 
 WITH highest_salary AS (
@@ -18,6 +21,14 @@ WITH highest_salary AS (
 SELECT MAX(salary) AS "SecondHighestSalary" 
 FROM Employee
 WHERE salary < (SELECT salary FROM highest_salary);
+
+Pyspark solution  - 
+df_highest_salary = df_employee.agg(max(col("Salary")).alias("Salary"))
+
+df_result = df_employee.filter(df_employee[Salary] < df_highest_salary[Salary])\
+            .agg(max(col("Salary")).alias("SecondHighestSalary"))
+
+df_result.write.parquet("path/to/your/output/parquet/file")
 
 SOLUTION 3 - 
 WITH CTE AS (
@@ -31,6 +42,13 @@ FROM CTE
 ORDER BY Salary ASC
 LIMIT 1;
 
+Pyspark solution  - 
+df_cte = df_employee.select("Salary").orderBy("Salary").desc().limit(2)
+
+df_result = df_cte.select(col("Salary").alias("SecondHighestSalary"))\
+        .orderBy("Salary").limit(1)
+
+df_result.write.parquet("path/to/your/output/parquet/file")        
 
 SOLUTION 4 - 
 
@@ -43,3 +61,15 @@ WITH CTE AS (
 SELECT Salary
 FROM CTE 
 WHERE DENSE_RANK = 2;
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import window
+
+window = Window.orderBy(col("Salary").desc())
+
+df_cte = df.withColumn("rnk", dense_rank().over(window))\
+df_result = df_cte.filter(col("rnk") == 2).select(col("Salary")).show()
+
+df_result.write.parquet("path/to/your/output/parquet/file")
