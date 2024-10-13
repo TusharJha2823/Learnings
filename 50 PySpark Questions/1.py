@@ -1,6 +1,6 @@
 # Databricks notebook source
 """
-Task - Write a Spark code snippet to calculate the sum of a column in a DataFrame
+Task - Write a Spark code snippet to calculate the sum, min, max, avg, count of a column in a DataFrame
 """
 
 # Sample employee data
@@ -16,6 +16,10 @@ display(df)
 
 # COMMAND ----------
 
-from pyspark.sql.functions import col,sum
-df_final=df.agg(sum(col("salary")).alias("total_salary")).first()[0]
-df_final
+from pyspark.sql.functions import *
+df_final=df.agg(sum(col("salary")).alias("total_salary"),
+                min(col("salary")).alias("minimum_salary"),
+                max(col("salary")).alias("maximum_salary"),
+                avg(col("salary")).alias("average_salary"),
+                count(col("salary")).alias("salary_count"))
+df_final.show()
