@@ -7,3 +7,18 @@ SOLUTION -
 SELECT player_id, MIN(event_date) AS "first_login"
 FROM Activity
 GROUP BY player_id 
+
+
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql import SparkSession
+
+
+spark = SparkSession.builder.appName("Game Play Analysis I").getOrCreate()
+
+df_result = df_activity.groupBy("player_id")\
+                    .agg(min("event_date").alias("first_login"))\
+                    .select("player_id", "first_login")

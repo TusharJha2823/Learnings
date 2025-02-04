@@ -1,0 +1,13 @@
+Prblem URL - 
+
+
+Solution - 
+
+#With IF
+UPDATE Salary SET sex = IF(sex = 'm', 'f', 'm')
+
+#With CASE
+UPDATE Salary SET sex = CASE WHEN sex ='m' THEN 'f' ELSE 'm' END
+
+
+

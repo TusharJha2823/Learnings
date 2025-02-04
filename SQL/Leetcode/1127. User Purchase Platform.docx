@@ -1,0 +1,39 @@
+Problem URL - 
+
+
+
+Solution - 
+
+
+SELECT aa.spend_date,
+       aa.platform,
+       COALESCE(bb.total_amount, 0) total_amount,
+       COALESCE(bb.total_users, 0) total_users
+FROM
+      (SELECT DISTINCT (spend_date), a.platform --- table aa
+       FROM Spending JOIN
+           (SELECT 'desktop' AS platform UNION
+            SELECT 'mobile' AS platform UNION
+            SELECT 'both' AS platform
+           ) a
+       ) aa
+LEFT JOIN
+      (SELECT spend_date, --- table bb
+              platform,
+              SUM(amount) total_amount,
+              COUNT(user_id) total_users
+       FROM
+           (SELECT spend_date,
+                   user_id,
+                   (CASE COUNT(DISTINCT platform)
+                       WHEN 1 THEN platform
+                       WHEN 2 THEN 'both'
+                        END) platform,
+                    SUM(amount) amount   
+            FROM Spending
+            GROUP BY spend_date, user_id
+           ) b
+       GROUP BY spend_date, platform
+      ) bb
+ON aa.spend_date = bb.spend_date 
+AND aa.platform = bb.platform

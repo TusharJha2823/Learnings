@@ -8,3 +8,20 @@ SELECT w1.id
 FROM Weather w1, Weather w2
 WHERE DATEDIFF(w1.recordDate, w2.recordDate) = 1
 AND w1.temperature > w2.temperature
+
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("Rising Temperature").getOrCreate()
+
+joined_df = df_weather.alias("w1").join(
+    df_weather.alias("w2"),
+    expr("DATEDIFF(w1.recordDate, w2.recordDate) = 1 AND w1.temperature > w2.temperature"),
+    "inner"  # Use inner join to filter based on the condition
+)
+
+joined_df.select(col("w1.id")).show()

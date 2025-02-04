@@ -11,3 +11,31 @@ WHERE (A1.player_id, DATE_SUB(A1.event_date, INTERVAL 1 day))  IN (
     SELECT A2.player_id, MIN(A2.event_date) AS first_login
     FROM Activity A2
     GROUP BY A2.player_id)
+
+
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql import SparkSession
+
+
+spark = SparkSession.builder.appName("Game Play Analysis IV").getOrCreate()
+
+# Assuming your DataFrame is named 'df'
+df = spark.table("Activity")  # Replace "Activity" with your actual table name
+
+# Create a temporary view for the CTE
+df.groupBy("player_id").agg(min("event_date").alias("first_login")).createOrReplaceTempView("CTE")
+
+# Perform the main query
+result_df = spark.sql("""
+    SELECT player_id, device_id
+    FROM Activity
+    WHERE player_id IN (SELECT player_id FROM CTE)
+    AND event_date IN (SELECT first_login FROM CTE)
+""")
+
+# Show the results
+result_df.show()

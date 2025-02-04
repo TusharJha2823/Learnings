@@ -1,0 +1,9 @@
+Problem URL - 
+
+
+Solution - 
+
+SELECT IFNULL((round(accepts/requests, 2)),0.0) AS accept_rate
+FROM 
+    (SELECT count(DISTINCT sender_id, send_to_id) AS requests FROM friend_request)
+    (SELECT count(DISTINCT request_id, accepter_id) AS accepts FROM request_acc)

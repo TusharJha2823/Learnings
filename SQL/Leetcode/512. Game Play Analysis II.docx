@@ -15,9 +15,24 @@ SQL server -
 WITH CTE AS (SELECT player_id, MIN(event_date) AS "first_login"
     FROM Activity
     GROUP BY player_id)
-
-
 SELECT player_id, device_id
 FROM Activity
 WHERE  player_id IN (SELECT player_id FROM CTE)
 AND event_date IN (SELECT first_login FROM CTE)
+
+
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql import SparkSession
+
+
+spark = SparkSession.builder.appName("Game Play Analysis II").getOrCreate()
+
+df_cte = df_activity.groupBy("player_id")\
+                    .agg(min("event_date").alias("first_login"))
+
+result_df = df_activity.join(df_cte, on=["player_id", "event_date"], how="inner")
+

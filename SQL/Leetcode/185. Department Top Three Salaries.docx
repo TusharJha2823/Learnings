@@ -26,7 +26,7 @@ spark = SparkSession.builder.appName("Department Top 3 Salary").getOrCreate()
 
 window = Window.partitionBy(col("df_Employee.departmentId")).orderBy(col("df_Employee.salary").desc())
 
-df_cte = df_Employee.select("id", col("name").alias("Employee"), salary, departmentId)\
+df_cte = df_Employee.select("id", col("name").alias("Employee"), "salary", "departmentId")\
                      .withColumn("rnk", dense_rank().over(window))
 df_cte = df_cte.filter(col("rnk")< = 3)
 

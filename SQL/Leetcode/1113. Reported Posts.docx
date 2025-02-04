@@ -1,0 +1,13 @@
+Problem URL -
+
+
+Solution -
+
+
+SELECT extra report_reason, COUNT(DISTINCT post_id) report_count
+FROM (
+    SELECT post_id, extra
+    FROM Actions
+    WHERE action_date = DATE_SUB('2010-07-05', INTERVAL 1 DAY) AND
+        action = 'report') AS tmp
+GROUP BY extra

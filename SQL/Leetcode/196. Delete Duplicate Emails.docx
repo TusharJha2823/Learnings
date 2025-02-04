@@ -6,3 +6,26 @@ Youtube URL - https://www.youtube.com/watch?v=5mP8Dxgbk1Q&list=PL5TWX8S_wvBPtMyB
   DELETE p1
 FROM Person p1 INNER JOIN Person p2
 WHERE p1.email=p2.email AND p1.id>p2.id
+
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("Delete Duplicate Emails").getOrCreate()
+
+window_spec = Window.partitionBy("email").orderBy(col("id").desc())
+
+# Create a new DataFrame with a row number for each partition
+df_with_rownum = df.withColumn("row_num", row_number().over(window_spec))
+
+# Filter the DataFrame to keep only the unique rows based on the row number
+df_unique = df_with_rownum.filter(col("row_num") == 1).drop("row_num")
+
+# Show the resulting DataFrame
+df_unique.show()
+
+
+

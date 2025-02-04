@@ -28,3 +28,26 @@ GROUP BY t1.player_id, t1.event_date;
 > Filtering: The WHERE clause filters records where t1.event_date is greater than or equal to t2.event_date.
 > Grouping Results: Finally, it groups the results by player_id and event_date.
 
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql import SparkSession
+
+
+spark = SparkSession.builder.appName("Game Play Analysis III").getOrCreate()
+
+df_joined = df_activity.alias("t1").join(
+    df_activity.alias("t2"), t1."player_id" = t2."player_id"
+).filter(col("t1.event_date") >= col("t2.event_date"))\
+.groupBy(col("t1.player_id"), col("t1.event_date"))\
+.agg(sum(col("t2.games_played").alias("games_played_so_far")))\
+.select(col("t1.player_id"), col("t1.event_date"), col("games_played_so_far"))
+
+
+
+
+
+
+

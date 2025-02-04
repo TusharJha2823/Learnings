@@ -11,3 +11,29 @@ WHERE request_at BETWEEN '2013-10-01' AND '2013-10-03'
 AND client_id IN (SELECT users_id FROM Users WHERE banned = 'No')
 AND driver_id IN (SELECT users_id FROM Users WHERE banned = 'No')
 GROUP BY request_at
+
+Pyspark solution  - 
+from pyspark.sql.types import *
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("Trips and Users").getOrCreate()
+
+df_approved_client = df_users.filter(col("banned") == 'No')
+df_approved_driver = df_users.filter(col("banned") == 'No')
+
+df_filter = df_trips.join(
+    df_approved_client, col("trips_df.users_id") == col("df_approved_client.users_id")
+).join(df_approved_driver, col("trips_df.users_id") == col("df_approved_driver.users_id"))
+
+
+df_filter = df_trips.filter(
+            (col("trips_df.request_at") >= '2013-10-01') 
+            &  (col("trips_df.request_at") <= '2013-10-03')
+        ).groupBy(col("trips_df.request_at"))\
+        .agg(
+            round(
+                sum(when(col("trips_df.status") != "completed"', 1).otherwise(0)) * 1.00 /COUNT(status),2)
+                .alias("Cancellation Rate"))\
+        .select(col("request_at").alias("Day"), col("Cancellation Rate"))

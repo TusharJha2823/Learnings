@@ -1,0 +1,21 @@
+Problem URL - 
+
+
+Solution - 
+
+SELECT
+    install_dt,
+    COUNT(player_id) installs,
+    ROUND(COUNT(retention)/COUNT(player_id), 2) Day1_retention
+FROM
+    (
+        SELECT a.player_id, a.install_dt, b.event_date retention  --- id
+        FROM
+            (SELECT player_id, MIN(event_date) install_dt  --- subquery 1
+            FROM Activity
+            GROUP BY player_id) a LEFT JOIN Activity b ON  --- sql left
+                a.player_id = b.player_id AND
+                a.install_dt + 1 = b.event_date
+    ) AS tmp
+GROUP BY
+    install_dt

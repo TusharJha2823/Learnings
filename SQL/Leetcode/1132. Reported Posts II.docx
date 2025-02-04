@@ -1,0 +1,17 @@
+Problem URL - 
+
+
+
+Solution - 
+
+WITH t1 AS (
+  SELECT a.action_date, (COUNT(DISTINCT r.post_id))/(COUNT(DISTINCT a.post_id)) AS result
+  FROM (SELECT action_date, post_id
+        FROM actions
+        WHERE extra = 'spam' AND action = 'report') a
+  LEFT JOIN removals r
+  ON a.post_id = r.post_id
+  GROUP BY a.action_date
+)
+SELECT ROUND(AVG(t1.result)*100, 2) AS average_daily_percent
+FROM t1

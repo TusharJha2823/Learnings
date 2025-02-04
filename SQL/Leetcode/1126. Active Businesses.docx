@@ -1,0 +1,16 @@
+Problem URL - 
+
+
+
+Solution- 
+
+SELECT business_id
+FROM (SELECT a.business_id, a.event_type, a.occurences, b.event_avg ---
+      FROM Events a LEFT JOIN
+           (SELECT event_type, AVG(occurences) event_avg --- sub 1
+            FROM Events
+            GROUP BY event_type) b ON
+           a.event_type = b.event_type) tmp
+WHERE occurences > event_avg
+GROUP BY business_id
+HAVING COUNT(event_type) > 1
